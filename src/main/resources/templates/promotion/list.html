@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: head}"><title>Khuyến mãi</title></head>
+<body>
+<nav th:replace="~{fragments/common :: navigation}"></nav>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h3 class="fw-bold">Danh sách khuyến mãi</h3>
+        <a class="btn btn-primary" th:href="@{/promotions/new}">Thêm khuyến mãi</a>
+    </div>
+    <div class="card mt-3">
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th>STT</th><th>Mã</th><th>Tên</th><th>%</th><th>Bắt đầu</th><th>Kết thúc</th><th>Trạng thái</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p, i : ${promotions}">
+                    <td th:text="${i.count}"></td>
+                    <td th:text="${p.code}"></td>
+                    <td th:text="${p.name}"></td>
+                    <td th:text="${p.percent}"></td>
+                    <td th:text="${p.startAt}"></td>
+                    <td th:text="${p.endAt}"></td>
+                    <td th:text="${p.status}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/common :: footer}"></footer>
+<div th:replace="~{fragments/common :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: head">
+    <title>Khách hàng</title>
+</head>
+<body>
+<nav th:replace="fragments/common :: navigation"></nav>
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Khách hàng</h3>
+        <a class="btn btn-primary" th:href="@{/customers/create}">+ Thêm mới</a>
+    </div>
+
+    <form class="row g-2 mb-3" th:action="@{/customers}" method="get">
+        <div class="col-sm-6 col-md-5">
+            <input class="form-control" type="text" name="q" placeholder="Tìm theo Tên / SĐT / Email" th:value="${q}">
+        </div>
+        <input type="hidden" name="sortBy" th:value="${sortBy}">
+        <input type="hidden" name="dir" th:value="${dir}">
+        <div class="col-auto">
+            <button class="btn btn-outline-secondary" type="submit">Tìm</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+            <tr>
+                <th><a th:href="${sortByNameUrl}" class="text-decoration-none">Tên</a></th>
+                <th>SĐT</th>
+                <th>Email</th>
+                <th>Loại thành viên</th>
+                <th class="text-end">
+                    <a th:href="${sortByPointUrl}" class="text-decoration-none">Điểm</a>
+                </th>
+                <th class="text-center" style="width:160px;">Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${data.content}">
+                <td th:text="${c.name}"></td>
+                <td th:text="${c.phone}"></td>
+                <td th:text="${c.email}"></td>
+                <td th:text="${c.memberType}"></td>
+                <td class="text-end" th:text="${c.point}"></td>
+                <td class="text-center">
+                    <div class="btn-group btn-group-sm">
+                        <a class="btn btn-outline-primary" th:href="@{|/customers/${c.id}/edit|}">Sửa</a>
+                        <form th:action="@{|/customers/${c.id}/delete|}" method="post"
+                              onsubmit="return confirm('Xác nhận xoá?');">
+                            <input type="hidden" th:if="${_csrf != null}"
+                                   th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button class="btn btn-outline-danger" type="submit">Xoá</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="${data.totalElements == 0}">
+                <td colspan="6" class="text-center text-muted">Không có dữ liệu</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center" th:if="${totalPages > 1}">
+        <div class="text-muted">Trang [[${currentPage}]] / [[${totalPages}]]</div>
+        <nav>
+            <ul class="pagination mb-0">
+                <li class="page-item" th:classappend="${!hasPrev} ? 'disabled'">
+                    <a class="page-link" th:href="${prevUrl} ?: '#'" aria-label="Previous">« Trước</a>
+                </li>
+                <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                    <a class="page-link" th:href="${nextUrl} ?: '#'" aria-label="Next">Sau »</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<footer th:replace="fragments/common :: footer"></footer>
+<div th:replace="fragments/common :: scripts"></div>
+</body>
+</html>

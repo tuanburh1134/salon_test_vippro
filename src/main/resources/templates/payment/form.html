@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Thêm thanh toán</title>
+
+    <!-- Nếu dự án đã có Bootstrap qua layout, có thể bỏ 2 thẻ dưới -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        /* Luôn 2 cột cho danh sách checkbox */
+        .chooser-grid{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:.5rem .75rem;
+        }
+        .chooser-grid .form-check{
+            display:flex;align-items:center;gap:.5rem;margin:0;width:100%;height:100%;
+            border:1px solid #e9ecef;border-radius:.375rem;padding:.5rem .75rem;background:#fff;
+        }
+        .chooser-grid .form-check-input{margin-top:0;}
+        .section-card .card-header{background:#f8f9fa;}
+    </style>
+</head>
+<body class="bg-light">
+<div class="container py-4">
+
+    <div class="d-flex align-items-center mb-3">
+        <h3 class="mb-0">Thêm thanh toán</h3>
+        <a class="btn btn-outline-secondary btn-sm ms-3" th:href="@{/payments}">Quay lại</a>
+    </div>
+
+    <!-- ĐẶT th:object Ở FORM, KHỐI LỖI NẰM BÊN TRONG FORM -->
+    <form th:action="@{/payments}" th:object="${form}" method="post" class="card shadow-sm">
+        <!-- HIỂN THỊ LỖI: KHÔNG DÙNG 'all' & Ở TRONG th:object -->
+        <div class="alert alert-danger m-3" th:if="${#fields.hasAnyErrors()}">
+            <strong>Vui lòng kiểm tra lại thông tin:</strong>
+            <ul class="mb-0">
+                <li th:each="e : ${#fields.errors()}" th:text="${e}">Lỗi</li>
+            </ul>
+        </div>
+
+        <div class="card-body">
+
+            <!-- HÀNG 1: Mã đặt lịch & Chọn booking -->
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Mã đặt lịch *</label>
+                    <input type="text" class="form-control" placeholder="Nhập mã đặt lịch" th:field="*{bookingCode}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Hoặc chọn từ danh sách</label>
+                    <select class="form-select" id="bookingSelect">
+                        <option value="">-- Chọn booking --</option>
+                        <option th:each="b : ${bookings}" th:value="${b.code}" th:text="${b.code}"></option>
+                    </select>
+                    <div class="form-text">Chọn ở đây sẽ tự điền “Mã đặt lịch”.</div>
+                </div>
+
+                <!-- HÀNG 2: Khách hàng & Khuyến mãi -->
+                <div class="col-md-6">
+                    <label class="form-label">Khách hàng</label>
+                    <select class="form-select" th:field="*{customerId}">
+                        <option value="">-- Mặc định theo booking --</option>
+                        <option th:each="c : ${customers}" th:value="${c.id}" th:text="${c.name + ' - ' + c.phone}"></option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Khuyến mãi</label>
+                    <select class="form-select" th:field="*{promotionId}">
+                        <option value="">-- Không áp dụng --</option>
+                        <option th:each="p : ${promotions}"
+                                th:value="${p.id}"
+                                th:text="${(#strings.isEmpty(p.name) ? ('KM #' + p.id) : p.name) + ' - ' + p.percent + '%'}"></option>
+                    </select>
+
+                </div>
+
+                <!-- HÀNG 3: Phương thức & Thời điểm -->
+                <div class="col-md-6">
+                    <label class="form-label">Phương thức</label>
+                    <select class="form-select" th:field="*{method}">
+                        <option value="">-- Chọn phương thức --</option>
+                        <option th:each="m : ${methods}" th:value="${m}" th:text="${m}"></option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Thời điểm thanh toán</label>
+                    <input type="datetime-local" class="form-control" th:field="*{paidAt}">
+                </div>
+            </div>
+
+            <!-- DỊCH VỤ -->
+            <div class="card mt-4 section-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="fw-medium">Dịch vụ</span>
+                    <button class="btn btn-sm btn-outline-secondary" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#servicesCollapse">
+                        Hiện/Ẩn
+                    </button>
+                </div>
+                <div id="servicesCollapse" class="collapse show">
+                    <div class="card-body">
+                        <div class="chooser-grid">
+                            <label class="form-check" th:each="s : ${services}">
+                                <input class="form-check-input" type="checkbox" th:field="*{serviceItemIds}" th:value="${s.id}">
+                                <span class="form-check-label"
+                                      th:text="|${s.name} - ${#numbers.formatDecimal(s.price,0,'POINT',2,'POINT')}|">Tên - Giá</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SẢN PHẨM SỬ DỤNG -->
+            <div class="card mt-3 section-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="fw-medium">Sản phẩm sử dụng</span>
+                    <button class="btn btn-sm btn-outline-secondary" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#productsCollapse">
+                        Hiện/Ẩn
+                    </button>
+                </div>
+                <div id="productsCollapse" class="collapse show">
+                    <div class="card-body">
+                        <div class="chooser-grid">
+                            <label class="form-check" th:each="p : ${products}">
+                                <input class="form-check-input" type="checkbox" th:field="*{productUsageIds}" th:value="${p.id}">
+                                <span class="form-check-label"
+                                      th:text="|${p.productName} - ${#numbers.formatDecimal(p.price,0,'POINT',2,'POINT')} x ${p.quantityUsed}|">
+                  Tên - Giá x SL
+                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Lưu thanh toán</button>
+            <a class="btn btn-outline-secondary" th:href="@{/payments}">Huỷ</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Chọn booking -> điền bookingCode
+    (function(){
+        const select = document.getElementById('bookingSelect');
+        const codeInput = document.querySelector('input[name="bookingCode"]');
+        if(select && codeInput){
+            select.addEventListener('change', function(){
+                codeInput.value = this.value || '';
+            });
+        }
+    })();
+</script>
+</body>
+</html>

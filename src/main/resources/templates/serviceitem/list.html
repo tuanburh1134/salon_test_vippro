@@ -1,0 +1,233 @@
+<!-- serviceitem/list.html -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: head">
+    <title>Quản lý dịch vụ</title>
+
+    <style>
+        /* === Sticky Footer: luôn ở đáy, không đè nội dung === */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+        main {
+            flex: 1;
+        }
+        footer {
+            margin-top: auto;
+            background: #fff;
+            border-top: 1px solid #dee2e6;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+            padding: 12px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* === Style cho card, bảng và nút === */
+        .page-header {
+            background: linear-gradient(90deg, #6f42c1, #8b5cf6);
+            color: #fff;
+            padding: 32px 0;
+            margin-bottom: 24px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .btn-salon {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(111,66,193,0.25);
+            transition: all .2s ease;
+        }
+        .btn-salon:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(111,66,193,0.35);
+        }
+
+        .table thead {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .service-image {
+            width: 72px;
+            height: 72px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border: 1px solid rgba(0,0,0,.06);
+        }
+    </style>
+</head>
+
+<body>
+<nav th:replace="fragments/common :: navigation"></nav>
+
+<main>
+    <div class="page-header">
+        <div class="container">
+            <h1 class="mb-0"><i class="fa-solid fa-spa me-2"></i>Quản lý dịch vụ</h1>
+            <p class="mb-0 mt-2">Danh sách dịch vụ tại salon</p>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- Thông báo flash -->
+        <div th:if="${msg}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i><span th:text="${msg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Bộ lọc -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <form class="row g-3 align-items-end" th:action="@{/services}" method="get">
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="fa-solid fa-magnifying-glass me-1"></i>Từ khóa
+                        </label>
+                        <input class="form-control" name="keyword" placeholder="Nhập tên dịch vụ..."
+                               th:value="${q.keyword}">
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button class="btn btn-salon" type="submit">
+                            <i class="fa-solid fa-search me-1"></i>Tìm
+                        </button>
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <a class="btn btn-outline-secondary" th:href="@{/services}">
+                            <i class="fa-solid fa-xmark me-1"></i>Clear
+                        </a>
+                    </div>
+                    <div class="col-md-2 d-grid ms-auto">
+                        <a class="btn btn-primary" th:href="@{/services/create}">
+                            <i class="fa-solid fa-plus me-1"></i>Thêm dịch vụ
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Bảng danh sách -->
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-dark">
+                        <tr>
+                            <th style="width:80px">STT</th>
+                            <th style="width:100px">Ảnh</th>
+                            <th>Tên dịch vụ</th>
+                            <th style="width:140px">Loại</th>
+                            <th style="width:140px" class="text-end">Giá</th>
+                            <th style="width:160px" class="text-center">Thời gian</th>
+                            <th style="width:130px" class="text-center">Trạng thái</th>
+                            <th style="width:170px" class="text-end">Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${page.totalElements == 0}">
+                            <td colspan="8" class="text-center py-4 text-muted">
+                                <i class="fa-regular fa-inbox fa-2x mb-2"></i><br>Không có dữ liệu
+                            </td>
+                        </tr>
+
+                        <tr th:each="s, iter : ${page.content}">
+                            <td><span class="badge bg-secondary" th:text="${page.number * page.size + iter.index + 1}">1</span></td>
+                            <td>
+                                <img th:if="${s.imagePath != null and !#strings.isEmpty(s.imagePath)}"
+                                     th:src="${s.imagePath}" alt="Ảnh" class="service-image">
+                                <div th:if="${s.imagePath == null or #strings.isEmpty(s.imagePath)}"
+                                     class="service-image d-flex align-items-center justify-content-center">
+                                    <i class="fa-regular fa-image text-muted"></i>
+                                </div>
+                            </td>
+                            <td><strong th:text="${s.name}"></strong></td>
+                            <td><span class="badge bg-info" th:text="${s.type}"></span></td>
+                            <td class="text-end price"
+                                th:text="${#numbers.formatDecimal(s.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</td>
+                            <td class="text-center">
+                                <i class="fa-regular fa-clock me-1"></i><span th:text="${s.durationMinutes}"></span> phút
+                            </td>
+                            <td class="text-center">
+                                <span th:classappend="${s.active} ? 'badge bg-success' : 'badge bg-secondary'"
+                                      th:text="${s.active ? 'Đang hoạt động' : 'Ngừng'}"></span>
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-warning"
+                                   th:href="@{|/services/${s.id}/edit|}" title="Chỉnh sửa">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </a>
+                                <form th:action="@{|/services/${s.id}/delete|}" method="post" class="d-inline"
+                                      onsubmit="return confirm('Xóa dịch vụ này?');">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit" title="Xóa">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phân trang -->
+        <div th:if="${page.totalPages > 1}" class="card mt-3">
+            <div class="card-body">
+                <nav aria-label="pagination">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                            <a class="page-link" th:href="@{/services(page=0, keyword=${q.keyword})}">
+                                <i class="fa-solid fa-angles-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                            <a class="page-link" th:href="@{/services(page=${page.number - 1}, keyword=${q.keyword})}">
+                                <i class="fa-solid fa-angle-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item"
+                            th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                            th:classappend="${i == page.number} ? 'active'">
+                            <a class="page-link" th:text="${i + 1}"
+                               th:href="@{/services(page=${i}, keyword=${q.keyword})}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                            <a class="page-link" th:href="@{/services(page=${page.number + 1}, keyword=${q.keyword})}">
+                                <i class="fa-solid fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                            <a class="page-link" th:href="@{/services(page=${page.totalPages - 1}, keyword=${q.keyword})}">
+                                <i class="fa-solid fa-angles-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="fragments/common :: footer"></footer>
+<div th:replace="fragments/common :: scripts"></div>
+</body>
+</html>
