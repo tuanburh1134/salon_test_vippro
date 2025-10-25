@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<body>
+<!-- HEAD -->
+<th:block th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} ?: 'Salon'">Salon</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root{
+            --brand:#6f42c1;
+            --brand-2:#8b5cf6;
+            --gold:#ffd700;
+            --text:#ffffff;
+            --muted:#adb5bd;
+            --footer-h:56px;
+        }
+        html, body{height:100%}
+        body{
+            margin:0;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text);
+            background:
+                    radial-gradient(60rem 60rem at 110% -10%, rgba(255,215,0,.18), transparent 60%),
+                    radial-gradient(50rem 50rem at -10% 110%, rgba(139,92,246,.18), transparent 65%),
+                    linear-gradient(135deg, #1f1f22 0%, #2b3035 100%);
+            background-attachment: fixed;
+            background-size: cover;
+            overflow-x:hidden;
+            padding-bottom: var(--footer-h);
+        }
+        .navbar .nav-link {
+            position: relative;
+            color: #e8e8e8;
+            font-weight: 500;
+            padding: .6rem 1.2rem;
+            border-radius: 10px;
+            transition: all .3s ease;
+            text-align: center;
+            overflow: hidden;
+        }
+        .navbar .nav-link::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #8b5cf6, #facc15, #8b5cf6);
+            background-size: 300%;
+            border-radius: 10px;
+            z-index: -1;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform .4s ease, background-position 1.5s ease;
+        }
+        .navbar .nav-link:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+            background-position: 100%;
+        }
+        .navbar .nav-link:hover {
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(139,92,246,.3), 0 0 15px rgba(255,215,0,.2);
+            transform: translateY(-2px) scale(1.05);
+        }
+        .navbar .nav-link.active {
+            color: #fff !important;
+            font-weight: 600;
+            background: linear-gradient(135deg, rgba(139,92,246,.35), rgba(255,215,0,.25));
+            box-shadow: 0 4px 14px rgba(139,92,246,.5), inset 0 0 12px rgba(255,255,255,.1);
+        }
+        .navbar-nav {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            width: 100%;
+            gap: 1rem;
+        }
+        .navbar .container { display: flex; justify-content: space-between; align-items: center; }
+
+        .page-header{
+            background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.1));
+            color:#fff; padding:24px 0; margin-bottom:16px;
+            border-bottom:1px solid rgba(255,255,255,.08);
+        }
+        .btn-salon{
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            color:#fff;border:none;
+            box-shadow: 0 6px 16px rgba(111,66,193,.35);
+            transition: transform .15s ease, box-shadow .15s ease, opacity .2s ease;
+        }
+        .btn-salon:hover{ transform: translateY(-1px); box-shadow: 0 10px 24px rgba(111,66,193,.45); opacity:.95; color:#fff; }
+        .service-image{ width:72px;height:72px;object-fit:cover;border-radius:12px; background:#f8f9fa;border:1px solid rgba(0,0,0,.06); }
+        .price{white-space:nowrap}
+
+        html, body { height: 100%; display: flex; flex-direction: column; }
+        main { flex: 1; }
+        footer { justify-content: center; text-align: center; }
+        footer .container { text-align: center; margin-left: auto; margin-right: auto; }
+        footer {
+            height: var(--footer-h);
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(90deg, rgba(0,0,0,.65), rgba(0,0,0,.5));
+            backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(255,255,255,.08);
+            box-shadow: 0 -8px 20px rgba(0,0,0,.35);
+            color: #d0d0d0; margin-top: auto; width: 100%;
+        }
+        @media (max-width: 991.98px){ .navbar .nav-link{ margin-top:.25rem; } }
+        @media (max-width: 575.98px){ .navbar-brand{ font-size:1rem; } :root{ --footer-h: 64px; } }
+        html, body { height: 100%; display: flex; flex-direction: column; }
+        main { flex: 1 0 auto; }
+        footer { flex-shrink: 0; width: 100%; }
+        body { padding-bottom: 0 !important; }
+        footer { margin-top: auto !important; }
+    </style>
+</th:block>
+
+<!-- NAV -->
+<th:block th:fragment="navigation">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fa-solid fa-scissors me-2"></i>Salon
+            </a>
+
+            <div class="navbar-nav">
+                <a class="nav-link"
+                   th:href="@{/services}"
+                   th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #httpServletRequest.requestURI.startsWith('/services')} ? ' active'">
+                    <i class="fa-solid fa-list me-1"></i>Dịch vụ
+                </a>
+
+                <a class="nav-link"
+                   th:href="@{/productusage}"
+                   th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #httpServletRequest.requestURI.startsWith('/productusage')} ? ' active'">
+                    <i class="fa-solid fa-box me-1"></i>Sản phẩm sử dụng
+                </a>
+
+                <a class="nav-link"
+                   th:href="@{/employees}"
+                   th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #httpServletRequest.requestURI.startsWith('/employees')} ? ' active'">
+                    <i class="fa-solid fa-user-tie me-1"></i>Nhân viên
+                </a>
+
+                <a class="nav-link"
+                   th:href="@{/customers}"
+                   th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #httpServletRequest.requestURI.startsWith('/customers')} ? ' active'">
+                    <i class="fa-solid fa-user-group me-1"></i>Khách hàng
+                </a>
+
+                <!-- >>> Thêm 3 nút như bạn yêu cầu -->
+                <a class="nav-link"
+                   th:href="@{/promotions}"
+                   th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #httpServletRequest.requestURI.startsWith('/promotions')} ? ' active'">
+                    <i class="fa-solid fa-tags me-1"></i>Khuyến mãi
+                </a>
+
+                <a class="nav-link"
+                   th:href="@{/bookings}"
+                   th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #httpServletRequest.requestURI.startsWith('/bookings')} ? ' active'">
+                    <i class="fa-solid fa-calendar-check me-1"></i>Đặt lịch
+                </a>
+
+                <a class="nav-link"
+                   th:href="@{/payments}"
+                   th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI != null and #httpServletRequest.requestURI.startsWith('/payments')} ? ' active'">
+                    <i class="fa-solid fa-credit-card me-1"></i>Thanh toán
+                </a>
+                <!-- <<< Kết thúc phần thêm -->
+            </div>
+        </div>
+    </nav>
+</th:block>
+
+<!-- FLASH (dùng chung) -->
+<th:block th:fragment="flash">
+    <div class="container mt-3" th:if="${msg}">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-check me-1"></i>
+            <span th:text="${msg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+</th:block>
+
+<!-- FOOTER -->
+<th:block th:fragment="footer">
+    <footer class="border-top py-3 mt-4">
+        <div class="container text-muted small">©
+            <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> Salon Demo
+        </div>
+    </footer>
+</th:block>
+
+<!-- SCRIPTS -->
+<th:block th:fragment="scripts">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function sortBy(field) {
+            var f = document.getElementById('searchForm');
+            if (f) {
+                var sortByInput = f.querySelector('input[name="sortBy"]');
+                var dirInput = f.querySelector('input[name="dir"]');
+                var pageInput = f.querySelector('input[name="page"]');
+
+                var curField = (sortByInput && sortByInput.value) ? sortByInput.value : 'name';
+                var curDir = (dirInput && dirInput.value ? dirInput.value : 'asc').toLowerCase();
+                var nextDir = (curField === field && curDir === 'asc') ? 'desc' : 'asc';
+
+                if (sortByInput) sortByInput.value = field;
+                if (dirInput) dirInput.value = nextDir;
+                if (pageInput) pageInput.value = 0;
+
+                f.submit();
+            } else {
+                var params = new URLSearchParams(window.location.search);
+                var curField2 = params.get('sortBy') || 'name';
+                var curDir2 = (params.get('dir') || 'asc').toLowerCase();
+                var nextDir2 = (curField2 === field && curDir2 === 'asc') ? 'desc' : 'asc';
+                params.set('sortBy', field);
+                params.set('dir', nextDir2);
+                params.set('page', '0');
+                window.location.href = window.location.pathname + '?' + params.toString();
+            }
+        }
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: head">
+    <title th:text="${pageTitle}">Khách hàng</title>
+
+    <style>
+        /* === Sticky Footer === */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+        main {
+            flex: 1;
+        }
+        footer {
+            margin-top: auto;
+            background: #fff;
+            border-top: 1px solid #dee2e6;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* === Header === */
+        .page-header {
+            background: linear-gradient(90deg, #0d6efd, #4f9cff);
+            color: #fff;
+            padding: 28px 0;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(13,110,253,.25);
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* === Form style === */
+        .form-container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .form-control:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+        }
+
+        .btn-primary, .btn-outline-secondary {
+            border-radius: 8px;
+        }
+
+        h3 {
+            font-weight: 700;
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+<nav th:replace="fragments/common :: navigation"></nav>
+
+<main>
+    <!-- Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="mb-0">
+                <i class="fa-solid fa-user-group me-2"></i>
+                <span th:text="${pageTitle}">Thêm khách hàng</span>
+            </h1>
+            <p class="mb-0 mt-2">Quản lý thông tin khách hàng của salon</p>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="container py-4">
+        <div class="form-container">
+            <form th:action="@{${formAction}}" th:object="${form}" method="post" class="needs-validation" novalidate>
+                <input type="hidden" th:if="${_csrf != null}"
+                       th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div class="mb-3">
+                    <label class="form-label">Tên khách hàng</label>
+                    <input class="form-control" th:field="*{name}" placeholder="VD: Nguyễn Văn A">
+                    <small class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Số điện thoại</label>
+                    <input class="form-control" th:field="*{phone}" placeholder="VD: 0912345678">
+                    <small class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input class="form-control" th:field="*{email}" placeholder="vd@domain.com">
+                    <small class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Loại thành viên</label>
+                    <input class="form-control" th:field="*{memberType}" placeholder="Thường / VIP / Vàng / Bạch kim">
+                    <small class="text-danger" th:if="${#fields.hasErrors('memberType')}" th:errors="*{memberType}"></small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Điểm tích lũy</label>
+                    <input class="form-control" type="number" min="0" th:field="*{point}" placeholder="VD: 100">
+                    <small class="text-danger" th:if="${#fields.hasErrors('point')}" th:errors="*{point}"></small>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fa-solid fa-floppy-disk me-1"></i>Lưu
+                    </button>
+                    <a class="btn btn-outline-secondary" th:href="@{/customers}">
+                        <i class="fa-solid fa-arrow-left me-1"></i>Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="fragments/common :: footer"></footer>
+<div th:replace="fragments/common :: scripts"></div>
+</body>
+</html>

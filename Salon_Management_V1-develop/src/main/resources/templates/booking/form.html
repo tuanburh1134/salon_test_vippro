@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: head}">
+    <title>Thêm đặt lịch</title>
+    <style>
+        .section-card .card-header{background:#f8f9fa}
+        .chooser-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem .75rem}
+        .chooser-grid .form-check{display:flex;align-items:center;gap:.5rem;margin:0;width:100%;
+            border:1px solid #e9ecef;border-radius:.375rem;padding:.5rem .75rem;background:#fff}
+        .chooser-grid .form-check-input{margin-top:0}
+    </style>
+</head>
+<body>
+<nav th:replace="~{fragments/common :: navigation}"></nav>
+
+<div class="container py-4">
+    <div class="d-flex align-items-center mb-3">
+        <h3 class="mb-0"><i class="fa-regular fa-calendar-plus me-2"></i>Thêm đặt lịch</h3>
+        <a class="btn btn-outline-secondary btn-sm ms-3" th:href="@{/bookings}">
+            <i class="fa-solid fa-arrow-left-long me-1"></i>Quay lại
+        </a>
+    </div>
+
+    <form th:action="@{/bookings}" th:object="${form}" method="post" class="card shadow-sm">
+        <div class="card-body">
+            <div class="row g-3">
+                <!-- GIỮ MÃ ĐẶT LỊCH -->
+                <div class="col-md-4">
+                    <label class="form-label">Mã đặt lịch *</label>
+                    <input type="text" class="form-control" th:field="*{code}" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Khách hàng *</label>
+                    <select class="form-select" th:field="*{customerId}" required>
+                        <option value="">-- Chọn khách hàng --</option>
+                        <option th:each="c : ${customers}" th:value="${c.id}" th:text="${c.name}"></option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Thời gian đặt *</label>
+                    <input type="datetime-local" class="form-control" th:field="*{bookedAt}" required>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Dịch vụ</label>
+                    <div class="card section-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="fw-medium">Chọn dịch vụ</span>
+                            <button class="btn btn-sm btn-outline-secondary" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#servicesCollapse">Hiện/Ẩn</button>
+                        </div>
+                        <div id="servicesCollapse" class="collapse show">
+                            <div class="card-body">
+                                <div class="chooser-grid">
+                                    <label class="form-check" th:each="s : ${services}">
+                                        <input class="form-check-input" type="checkbox"
+                                               th:field="*{serviceItemIds}" th:value="${s.id}">
+                                        <span class="form-check-label" th:text="${s.name}">Tên dịch vụ</span>
+                                    </label>
+                                </div>
+                                <div class="form-text mt-2">Có thể chọn nhiều dịch vụ.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Trạng thái</label>
+                    <select class="form-select" th:field="*{status}">
+                        <option value="CHO_XU_LY">Chờ xử lý</option>
+                        <option value="XAC_NHAN">Xác nhận</option>
+                        <option value="HOAN_THANH">Hoàn thành</option>
+                        <option value="HUY">Hủy</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex gap-2">
+            <button class="btn btn-primary" type="submit">
+                <i class="fa-regular fa-floppy-disk me-1"></i>Lưu
+            </button>
+            <a class="btn btn-outline-secondary" th:href="@{/bookings}">Hủy</a>
+        </div>
+    </form>
+</div>
+
+<footer th:replace="~{fragments/common :: footer}"></footer>
+<div th:replace="~{fragments/common :: scripts}"></div>
+</body>
+</html>
