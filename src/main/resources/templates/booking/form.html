@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: head}"><title>Thêm đặt lịch</title></head>
+<body>
+<nav th:replace="~{fragments/common :: navigation}"></nav>
+
+<div class="container mt-4">
+    <h3 class="fw-bold">Thêm đặt lịch</h3>
+    <form th:action="@{/bookings}" th:object="${form}" method="post" class="card p-3">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Mã đặt lịch</label>
+                <input type="text" class="form-control" th:field="*{code}" required>
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">Khách hàng</label>
+                <select class="form-select" th:field="*{customerId}" required>
+                    <option th:each="c : ${customers}" th:value="${c.id}" th:text="${c.name}"></option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Thời gian đặt</label>
+                <input type="datetime-local" class="form-control" th:field="*{bookedAt}" required>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Dịch vụ</label>
+                <select multiple class="form-select" th:field="*{serviceItemIds}">
+                    <option th:each="s : ${services}" th:value="${s.id}"
+                            th:text="${s.name + ' - ' + s.price}"></option>
+                </select>
+                <div class="form-text">Giữ Ctrl/Command để chọn nhiều</div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Trạng thái</label>
+                <select class="form-select" th:field="*{status}">
+                    <option value="CHO_XU_LY">Chờ xử lý</option>
+                    <option value="XAC_NHAN">Xác nhận</option>
+                    <option value="HOAN_THANH">Hoàn thành</option>
+                    <option value="HUY">Hủy</option>
+                </select>
+            </div>
+        </div>
+        <div class="mt-3">
+            <button class="btn btn-primary">Lưu</button>
+            <a class="btn btn-outline-secondary" th:href="@{/bookings}">Hủy</a>
+        </div>
+    </form>
+</div>
+
+<footer th:replace="~{fragments/common :: footer}"></footer>
+<div th:replace="~{fragments/common :: scripts}"></div>
+</body>
+</html>

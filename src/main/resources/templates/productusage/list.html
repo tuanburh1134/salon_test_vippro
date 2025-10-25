@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: head">
+    <title>Sản phẩm sử dụng</title>
+
+    <style>
+        /* === Sticky Footer: luôn ở đáy, không đè nội dung === */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #f8f9fa;
+            color: #212529;
+        }
+        main {
+            flex: 1;
+        }
+        footer {
+            margin-top: auto;
+            background: #fff;
+            border-top: 1px solid #dee2e6;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+            padding: 12px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* === Trang header === */
+        .page-header {
+            background: linear-gradient(90deg, #0d6efd, #4f9cff);
+            color: #fff;
+            padding: 28px 0;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(13,110,253,.25);
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* === Card và bảng === */
+        .card {
+            border: 1px solid #edf0f4;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .table-hover tbody tr:hover {
+            background: #f2f7ff;
+        }
+
+        .table thead th {
+            text-transform: uppercase;
+            letter-spacing: .05rem;
+        }
+
+        /* === Nút hành động === */
+        .btn-icon {
+            width: 36px; height: 36px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: all .2s ease;
+        }
+
+        .btn-icon-warning {
+            border-color: #facc15;
+            color: #facc15;
+            background: rgba(250,204,21,.06);
+        }
+
+        .btn-icon-warning:hover {
+            border-color: #f59e0b;
+            color: #f59e0b;
+            background: rgba(250,204,21,.15);
+        }
+
+        .btn-icon-danger {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: rgba(239,68,68,.06);
+        }
+
+        .btn-icon-danger:hover {
+            border-color: #dc2626;
+            color: #dc2626;
+            background: rgba(239,68,68,.15);
+        }
+
+        /* === Phân trang === */
+        .pagination .page-link {
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+            color: #212529;
+            transition: all .2s ease;
+        }
+
+        .pagination .page-link:hover {
+            background: #f2f4f7;
+            border-color: #cbd5e1;
+        }
+
+        .page-item.active .page-link {
+            background: #0d6efd;
+            border-color: #0d6efd;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .page-item.disabled .page-link {
+            color: #98a2b3;
+            background: #f2f4f7;
+        }
+    </style>
+</head>
+
+<body>
+<nav th:replace="fragments/common :: navigation"></nav>
+
+<main>
+    <div class="page-header">
+        <div class="container">
+            <h1 class="mb-0"><i class="fa-solid fa-pump-soap me-2"></i>Sản phẩm sử dụng</h1>
+            <p class="mb-0 mt-2">Danh sách sản phẩm đã sử dụng trong dịch vụ</p>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div th:if="${msg}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i><span th:text="${msg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Bộ lọc -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <form class="row g-3" th:action="@{/productusage}" method="get">
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fa-solid fa-magnifying-glass me-1"></i>Từ khóa</label>
+                        <input class="form-control" name="q" placeholder="Tên sản phẩm hoặc mã dịch vụ" th:value="${q}">
+                    </div>
+
+                    <!-- giữ trạng thái sort -->
+                    <input type="hidden" name="sortBy" th:value="${sortBy}">
+                    <input type="hidden" name="dir" th:value="${dir}">
+
+                    <div class="col-md-2 align-self-end d-grid">
+                        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-search me-1"></i>Tìm</button>
+                    </div>
+                    <div class="col-md-2 align-self-end d-grid">
+                        <a class="btn btn-outline-secondary" th:href="@{/productusage}">
+                            <i class="fa-solid fa-xmark me-1"></i>Clear
+                        </a>
+                    </div>
+                    <div class="col-md-2 align-self-end d-grid ms-auto">
+                        <a class="btn btn-success" th:href="@{/productusage/create}">
+                            <i class="fa-solid fa-plus me-1"></i>Thêm mới
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Bảng -->
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Mã DV</th>
+                            <th>Tên sản phẩm</th>
+                            <th class="text-end">Số lượng</th>
+                            <th class="text-end">Giá</th>
+                            <th class="text-end" style="width:170px;">Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${data.totalElements == 0}">
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <i class="fa-regular fa-inbox fa-2x mb-2"></i><br>Không có dữ liệu
+                            </td>
+                        </tr>
+
+                        <tr th:each="p : ${data.content}">
+                            <td th:text="${p.serviceCode}">DV001</td>
+                            <td th:text="${p.productName}">Tên sản phẩm</td>
+                            <td class="text-end" th:text="${p.quantityUsed}">1</td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(p.price,0,'COMMA',0,'POINT')} + ' VNĐ'">0 VNĐ</td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm">
+                                    <a class="btn btn-icon btn-icon-warning"
+                                       th:href="@{|/productusage/${p.id}/edit|}" title="Chỉnh sửa">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </a>
+                                    <form th:action="@{|/productusage/${p.id}/delete|}" method="post"
+                                          onsubmit="return confirm('Xóa sản phẩm này?');" class="d-inline">
+                                        <input type="hidden" th:if="${_csrf != null}"
+                                               th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <button class="btn btn-icon btn-icon-danger" type="submit" title="Xóa">
+                                            <i class="fa-regular fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phân trang -->
+        <div th:if="${data.totalPages > 1}" class="card mt-3">
+            <div class="card-body">
+                <nav>
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item" th:classappend="${data.first} ? 'disabled'">
+                            <a class="page-link"
+                               th:href="@{/productusage(page=0, sortBy=${sortBy}, dir=${dir}, q=${q})}">
+                                <i class="fa-solid fa-angles-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" th:classappend="${data.first} ? 'disabled'">
+                            <a class="page-link"
+                               th:href="@{/productusage(page=${data.number - 1}, sortBy=${sortBy}, dir=${dir}, q=${q})}">
+                                <i class="fa-solid fa-angle-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, data.totalPages - 1)}"
+                            th:classappend="${i == data.number} ? 'active'">
+                            <a class="page-link" th:text="${i + 1}"
+                               th:href="@{/productusage(page=${i}, sortBy=${sortBy}, dir=${dir}, q=${q})}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${data.last} ? 'disabled'">
+                            <a class="page-link"
+                               th:href="@{/productusage(page=${data.number + 1}, sortBy=${sortBy}, dir=${dir}, q=${q})}">
+                                <i class="fa-solid fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" th:classappend="${data.last} ? 'disabled'">
+                            <a class="page-link"
+                               th:href="@{/productusage(page=${data.totalPages - 1}, sortBy=${sortBy}, dir=${dir}, q=${q})}">
+                                <i class="fa-solid fa-angles-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="fragments/common :: footer"></footer>
+<div th:replace="fragments/common :: scripts"></div>
+</body>
+</html>

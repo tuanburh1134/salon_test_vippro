@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: head">
+    <title th:text="${title}">Dịch vụ</title>
+
+    <style>
+        /* === Giữ footer luôn ở đáy và không đè lên nội dung === */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+        main {
+            flex: 1;
+        }
+        footer {
+            margin-top: auto;
+            background: #fff;
+            border-top: 1px solid #dee2e6;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* === Làm đẹp form === */
+        .form-container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .form-control:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+        }
+
+        .btn-primary,
+        .btn-outline-secondary {
+            border-radius: 8px;
+        }
+
+        h3 {
+            font-weight: 700;
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+<nav th:replace="fragments/common :: navigation"></nav>
+
+<main>
+    <div class="container py-4">
+        <h3 class="mb-3" th:text="${title}">Thêm dịch vụ</h3>
+
+        <div class="form-container">
+            <form th:action="@{${actionUrl}}" th:object="${form}" method="post" enctype="multipart/form-data" novalidate>
+
+                <div class="mb-3">
+                    <label class="form-label">Tên dịch vụ</label>
+                    <input class="form-control" th:field="*{name}" placeholder="VD: Cắt tóc nam">
+                    <small class="text-danger" th:errors="*{name}"></small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Loại</label>
+                    <input class="form-control" th:field="*{type}" placeholder="VD: Cắt tóc, nail...">
+                    <small class="text-danger" th:errors="*{type}"></small>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Giá (VND)</label>
+                        <input class="form-control" th:field="*{price}" type="number" min="0" step="0.01" placeholder="VD: 150000">
+                        <small class="text-danger" th:errors="*{price}"></small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Thời gian (phút)</label>
+                        <input class="form-control" th:field="*{durationMinutes}" type="number" min="1" placeholder="VD: 45">
+                        <small class="text-danger" th:errors="*{durationMinutes}"></small>
+                    </div>
+                </div>
+
+                <div class="form-check my-3">
+                    <input class="form-check-input" type="checkbox" th:field="*{active}" id="active">
+                    <label class="form-check-label" for="active">Đang hoạt động</label>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Ảnh mẫu (tùy chọn)</label>
+                    <input class="form-control" type="file" th:field="*{image}" accept="image/*" id="imageInput">
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-primary" type="submit">Lưu</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/services}">Hủy</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="fragments/common :: footer"></footer>
+<div th:replace="fragments/common :: scripts"></div>
+</body>
+</html>

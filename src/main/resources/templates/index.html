@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: head}">
+    <title>Salon Demo</title>
+
+    <!-- Font & Animate CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <img src="images/anh1.jpg"
+         alt="Background"
+         style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 10px;
+        height: 10px;
+        object-fit: cover;
+        object-position: center;
+        z-index: -2;
+     ">
+    <style>
+        /* ================= GLOBAL STYLE ================= */
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Lớp overlay làm tối nền */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 0;
+        }
+
+        /* Hiệu ứng ánh sáng chuyển động */
+        .light-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2), transparent 40%),
+            radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.2), transparent 50%);
+            animation: moveLight 12s infinite alternate ease-in-out;
+            z-index: 1;
+        }
+
+        @keyframes moveLight {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-10%, -10%) scale(1.1); }
+        }
+
+        /* ================= CONTENT BOX ================= */
+        .content-box {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 25px;
+            backdrop-filter: blur(15px);
+            padding: 3rem 2rem;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s ease;
+        }
+
+        .content-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        h2 {
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(255,255,255,0.4);
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+        }
+
+        /* ================= BUTTONS ================= */
+        .btn {
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease-in-out;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .btn i {
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .btn:hover i {
+            transform: rotate(15deg) scale(1.3);
+        }
+
+        /* ================= FOOTER ================= */
+        footer {
+            position: fixed;   /* dính sát chân */
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 56px;
+            background: rgba(0, 0, 0, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3;
+        }
+
+        /* Ẩn menu trong navbar, chỉ giữ logo */
+        .navbar-nav {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content-box { padding: 2rem 1rem; }
+            h2 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+
+<body>
+<!-- ✅ Navbar chỉ hiển thị logo -->
+<nav th:replace="~{fragments/common :: navigation}"></nav>
+
+<!-- Hiệu ứng nền -->
+<div class="overlay"></div>
+<div class="light-effect"></div>
+
+<!-- Nội dung chính -->
+<div class="container py-5 text-center content-box mt-5 animate__animated animate__fadeInUp">
+    <h2 class="fw-bold mb-3"> Chào mừng đến hệ thống quản lý Salon Demo </h2>
+    <p class="mb-4">
+        Ứng dụng quản lý <strong>dịch vụ, sản phẩm sử dụng</strong> và <strong>nhân viên</strong><br>
+        Sử dụng <strong>Spring Boot + Thymeleaf + Bootstrap 5</strong>
+    </p>
+
+    <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
+        <a class="btn btn-primary shadow" th:href="@{/services}">
+            <i class="fa-solid fa-scissors me-2"></i> Quản lý dịch vụ
+        </a>
+        <a class="btn btn-outline-light shadow" th:href="@{/productusage}">
+            <i class="fa-solid fa-boxes-stacked me-2"></i> Quản lý sản phẩm
+        </a>
+        <a class="btn btn-outline-warning shadow" th:href="@{/employees}">
+            <i class="fa-solid fa-user-tie me-2"></i> Quản lý nhân viên
+        </a>
+        <a class="btn btn-outline-success shadow" th:href="@{/customers}">
+            <i class="fa-solid fa-user-group me-2"></i> Quản lý khách hàng
+        </a>
+
+        <!-- ✅ BỔ SUNG THEO YÊU CẦU -->
+        <a class="btn btn-outline-info shadow" th:href="@{/promotions}">
+            <i class="fa-solid fa-tags me-2"></i> Khuyến mãi
+        </a>
+        <a class="btn btn-outline-secondary shadow" th:href="@{/bookings}">
+            <i class="fa-solid fa-calendar-check me-2"></i> Đặt lịch
+        </a>
+        <a class="btn btn-outline-primary shadow" th:href="@{/payments}">
+            <i class="fa-solid fa-credit-card me-2"></i> Thanh toán
+        </a>
+        <!-- 🔚 BỔ SUNG -->
+    </div>
+</div>
+
+<!--  Footer luôn sát chân -->
+<footer th:replace="~{fragments/common :: footer}"></footer>
+<div th:replace="~{fragments/common :: scripts}"></div>
+</body>
+</html>
